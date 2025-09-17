@@ -1,0 +1,74 @@
+<div class="container">
+  <div class="story-container">
+    <h3>Historias de Usuario</h3>
+
+    <!-- Mensajes de feedback -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+      <button class="close-btn" (click)="clearMessages()">×</button>
+    </div>
+    
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+      <button class="close-btn" (click)="clearMessages()">×</button>
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="loading" class="loading-text">
+      Cargando historias...
+    </div>
+
+    <!-- Lista de historias -->
+    <div *ngIf="!loading && stories.length > 0" class="stories-list">
+      <div *ngFor="let story of stories" class="story-item">
+        <strong>{{ story.title }}</strong>
+        <p>{{ story.description }}</p>
+        <!-- Componente de lista de tickets para cada historia -->
+        <app-ticket-list [storyId]="story.id"></app-ticket-list>
+      </div>
+    </div>
+
+    <p *ngIf="!loading && stories.length === 0" class="no-data">
+      No hay historias para este proyecto.
+    </p>
+
+    <!-- Formulario para nueva historia -->
+    <div class="new-story-card">
+      <h4>Crear Nueva Historia</h4>
+      <form (ngSubmit)="createStory()" #storyForm="ngForm" class="form-container">
+        <div class="form-group">
+          <label for="title">Título *</label>
+          <input 
+            id="title" 
+            [(ngModel)]="newTitle" 
+            name="title" 
+            placeholder="Título de la historia" 
+            required
+            [disabled]="isCreating"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción *</label>
+          <textarea
+            id="description"
+            [(ngModel)]="newDescription"
+            name="description"
+            placeholder="Describe la historia"
+            rows="3"
+            required
+            [disabled]="isCreating">
+          </textarea>
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="isCreating || !newTitle.trim() || !newDescription.trim()"
+        >
+          {{ isCreating ? 'Creando...' : 'Crear Historia' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

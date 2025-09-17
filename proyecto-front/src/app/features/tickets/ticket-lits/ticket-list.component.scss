@@ -1,0 +1,29 @@
+.ticket-list-container {
+  margin-top: 15px;
+}
+
+.ticket-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 12px;
+  
+  strong {
+    color: #37474f;
+    font-size: 14px;
+  }
+  
+  small {
+    color: #78909c;
+    display: block;
+    margin: 5px 0;
+  }
+}
+
+.tickets-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}

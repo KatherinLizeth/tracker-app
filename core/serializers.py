@@ -1,9 +1,25 @@
 from django.db import models
 from rest_framework import serializers
-from .models import Company, Project, Story, Ticket
+from .models import Company, Project, Story, Ticket, CustomUser
+from django.db import transaction
 
 
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
 
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'password', 'company']
+
+    def create(self, validated_data):
+        user = CustomUser(
+            username=validated_data['username'],
+            company=validated_data['company']
+        )
+        user.set_password(validated_data['password'])  # Encriptar contraseña
+        user.save()
+        return user
+    
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
@@ -17,7 +33,7 @@ class TicketSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        # ejemplo exigir título al crear ticket
+        #  exigir título al crear ticket
         if self.instance is None and not attrs.get('title'):
             raise serializers.ValidationError({"title": "El ticket debe tener un título."})
         return attrs
@@ -26,11 +42,8 @@ class TicketSerializer(serializers.ModelSerializer):
 # StorySerializer
 # -------------------------
 class StorySerializer(serializers.ModelSerializer):
-    # mostrar tickets asociados (solo lectura)
     tickets = TicketSerializer(many=True, read_only=True)
-
-    # campo de escritura opcional para crear el primer ticket en la misma petición
-    first_ticket = serializers.DictField(write_only=True, required=False)
+    first_ticket = serializers.DictField(write_only=True, required=False)  # Cambiado a required=False
 
     class Meta:
         model = Story
@@ -38,50 +51,36 @@ class StorySerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     def validate(self, data):
-        # Si es creación (POST) obligamos a que venga first_ticket (según requisito)
+        # Eliminar la validación que obliga a first_ticket
+        # o hacerla opcional
         request = self.context.get('request')
         if request and request.method == 'POST':
-            # Revisamos initial_data porque first_ticket es write_only
-            if 'first_ticket' not in self.initial_data:
+            first_ticket = self.initial_data.get('first_ticket', None)
+            if first_ticket and not first_ticket.get('title'):
                 raise serializers.ValidationError({
-                    "first_ticket": "Al crear una historia, debe incluirse el primer ticket (campo: first_ticket)."
-                })
-            # Validar que first_ticket tenga al menos un title
-            first = self.initial_data.get('first_ticket') or {}
-            if not first.get('title'):
-                raise serializers.ValidationError({
-                    "first_ticket": "El primer ticket debe incluir al menos 'title'."
+                    "first_ticket": "Si se proporciona first_ticket, debe incluir 'title'."
                 })
         return data
 
     def create(self, validated_data):
-        # first_ticket (si existe)
-        first_ticket = self.initial_data.get('first_ticket', None)
-        # quitamos del validated_data si está (no siempre estará)
-        if 'first_ticket' in validated_data:
-            validated_data.pop('first_ticket')
-
-        # creamos story y el ticket en una transacción atómica
-        with transaction.atomic():
-            story = Story.objects.create(**validated_data)
-            if first_ticket:
-                # campos del ticket
-                ticket_data = {
-                    'story': story,
-                    'title': first_ticket.get('title'),
-                    'description': first_ticket.get('description', ''),
-                    'comments': first_ticket.get('comments', ''),
-                    'status': first_ticket.get('status', 'ACTIVE')
-                }
-                #  status antes de crear
-                allowed = [c[0] for c in Ticket.STATUS_CHOICES]
-                if ticket_data['status'] not in allowed:
-                    raise serializers.ValidationError({
-                        "first_ticket": f"Estado inválido. Estados permitidos: {allowed}"
-                    })
-                Ticket.objects.create(**ticket_data)
+        #  first_ticket si existe, sino continuar sin él
+        first_ticket_data = validated_data.pop('first_ticket', None)
+        
+        # la historia
+        story = Story.objects.create(**validated_data)
+        
+        # ticket inicial solo si se proporcionó
+        if first_ticket_data:
+            ticket_data = {
+                'story': story,
+                'title': first_ticket_data.get('title'),
+                'description': first_ticket_data.get('description', ''),
+                'comments': first_ticket_data.get('comments', ''),
+                'status': first_ticket_data.get('status', 'ACTIVE')
+            }
+            Ticket.objects.create(**ticket_data)
+        
         return story
-
 # -------------------------
 # ProjectSerializer
 # -------------------------

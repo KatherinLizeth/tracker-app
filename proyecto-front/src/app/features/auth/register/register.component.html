@@ -1,0 +1,84 @@
+<div class="auth-container">
+  <div class="auth-form-container">
+    <h2>Registro de Usuario</h2>
+    
+    <!-- Mostrar mensaje de éxito -->
+    <div *ngIf="successMessage" class="auth-message auth-success">
+      {{ successMessage }}
+    </div>
+    
+    <!-- Mostrar errores -->
+    <div *ngIf="registerError" class="auth-message auth-error">
+      {{ registerError }}
+    </div>
+    
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+      <div class="auth-form-group">
+        <input 
+          type="text" 
+          placeholder="Nombre de usuario" 
+          [(ngModel)]="username" 
+          name="username" 
+          required 
+          [disabled]="isSubmitting"
+          class="auth-form-input"
+        />
+      </div>
+      
+      <div class="auth-form-group">
+        <input 
+          type="password" 
+          placeholder="Contraseña" 
+          [(ngModel)]="password" 
+          name="password" 
+          required 
+          [disabled]="isSubmitting"
+          class="auth-form-input"
+        />
+      </div>
+      
+      <div class="auth-form-group">
+        <input 
+          type="password" 
+          placeholder="Confirmar contraseña" 
+          [(ngModel)]="confirmPassword" 
+          name="confirmPassword" 
+          required 
+          [disabled]="isSubmitting"
+          class="auth-form-input"
+        />
+      </div>
+
+      <div class="auth-form-group">
+        <select 
+          [(ngModel)]="selectedCompany" 
+          name="company" 
+          required
+          [disabled]="isSubmitting || loading"
+          class="auth-form-input"
+        >
+          <option value="" disabled selected>Seleccione una compañía</option>
+          <option *ngFor="let company of companies" [value]="company.id">
+            {{ company.name }}
+          </option>
+        </select>
+      </div>
+
+      <button 
+        type="submit" 
+        class="auth-btn-primary" 
+        [disabled]="isSubmitting || loading"
+      >
+        {{ isSubmitting ? 'Registrando...' : 'Registrarse' }}
+      </button>
+      
+      <div *ngIf="loading" class="auth-message">
+        Cargando compañías...
+      </div>
+      
+      <div class="auth-link-container">
+        ¿Ya tienes cuenta? <a routerLink="/login" class="auth-link">Inicia sesión aquí</a>
+      </div>
+    </form>
+  </div>
+</div>

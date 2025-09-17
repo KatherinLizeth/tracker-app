@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="companies-container">
+    <div class="companies-header">
+      <h2>Compañías y sus Proyectos</h2>
+      <div class="header-controls">
+        <div class="companies-count">{{ companies.length }} compañías encontradas</div>
+        <div class="collapse-controls">
+          <button class="btn-collapse" (click)="collapseAll()">Colapsar Todo</button>
+          <button class="btn-expand" (click)="expandAll()">Expandir Todo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando compañías y proyectos...</p>
+    </div>
+
+    <!-- Lista horizontal de compañías -->
+    <div *ngIf="!loading && companies.length > 0" class="companies-grid">
+      <div *ngFor="let company of companies" class="company-section">
+        <!-- Encabezado de la compañía con botón de colapso -->
+        <div class="company-header" (click)="toggleCompany(company.id)">
+          <div class="company-info">
+            <h3 class="company-name">
+              <span class="collapse-icon">
+                {{ collapsedCompanies[company.id] ? '▶' : '▼' }}
+              </span>
+              {{ company.name }}
+            </h3>
+            <div class="company-details">
+              <span class="company-nit">NIT: {{ company.nit }}</span>
+              <span class="company-email">{{ company.email }}</span>
+            </div>
+          </div>
+          <div class="company-stats">
+            <span class="projects-count">
+              {{ getProjectsForCompany(company.id).length }} proyectos
+            </span>
+          </div>
+        </div>
+
+        <!-- Contenido colapsable -->
+        <div *ngIf="!collapsedCompanies[company.id]" class="company-content">
+          <!-- Proyectos de la compañía -->
+          <div *ngIf="getProjectsForCompany(company.id).length > 0" class="projects-grid">
+            <div *ngFor="let project of getProjectsForCompany(company.id)" class="project-card">
+              <div class="project-header">
+                <h4 class="project-title">{{ project.name }}</h4>
+                <span class="project-id">ID: {{ project.id }}</span>
+              </div>
+              
+              <div class="project-description">
+                <p>{{ project.description }}</p>
+              </div>
+
+              <!-- Historias del proyecto -->
+              <div class="stories-section">
+                <app-story-list [projectId]="project.id"></app-story-list>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mensaje si no hay proyectos -->
+          <div *ngIf="getProjectsForCompany(company.id).length === 0" class="no-projects">
+            <p>Esta compañía no tiene proyectos registrados.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="!loading && companies.length === 0" class="empty-state">
+      <div class="empty-icon">🏢</div>
+      <h3>No hay compañías disponibles</h3>
+      <p>No se encontraron compañías en el sistema.</p>
+    </div>
+  </div>
+</div>

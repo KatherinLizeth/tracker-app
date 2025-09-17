@@ -1,0 +1,42 @@
+<div class="company-list-container">
+  <div class="company-header">
+    <h2>Listado de Compañías</h2>
+    <button class="btn" (click)="reloadCompanies()" [disabled]="loading">
+      {{ loading ? 'Cargando...' : 'Actualizar' }}
+    </button>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading-state">
+    <p>Cargando compañías...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="errorMessage && !loading" class="error-state">
+    <p>{{ errorMessage }}</p>
+    <button (click)="reloadCompanies()">Reintentar</button>
+  </div>
+
+  <!-- Lista vacía -->
+  <div *ngIf="!loading && !errorMessage && companies.length === 0" class="empty-state">
+    <p>No se encontraron compañías</p>
+    <button class="btn" (click)="reloadCompanies()">Reintentar</button>
+  </div>
+
+  <!-- Grid de compañías -->
+  <div *ngIf="!loading && companies.length > 0" class="company-grid">
+    <div *ngFor="let company of companies" class="company-card">
+      <div class="company-name">{{ company.name }}</div>
+      
+      <div class="company-details">
+        <p><strong>NIT:</strong> {{ company.nit }}</p>
+        <p><strong>Dirección:</strong> {{ company.address }}</p>
+      </div>
+      
+      <div class="company-contact">
+        <p><strong>Teléfono:</strong> {{ company.phone }}</p>
+        <p><strong>Email:</strong> {{ company.email }}</p>
+      </div>
+    </div>
+  </div>
+</div>

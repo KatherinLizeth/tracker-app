@@ -1,0 +1,52 @@
+<div class="container">
+  <h3>Tickets de esta historia</h3>
+
+  <div class="form-container">
+    <h4>Crear Nuevo Ticket</h4>
+    <form (ngSubmit)="createTicket()">
+      <input
+        type="text"
+        placeholder="Título"
+        [(ngModel)]="newTitle"
+        name="title"
+        required
+      />
+      <textarea
+        placeholder="Descripción"
+        [(ngModel)]="newDescription"
+        name="description"
+        rows="3"
+        required
+      ></textarea>
+      <input
+        type="text"
+        placeholder="Comentarios"
+        [(ngModel)]="newComments"
+        name="comments"
+      />
+      <button class="btn" type="submit">Crear Ticket</button>
+    </form>
+  </div>
+
+  <div class="list-container">
+    <div *ngIf="loading" class="message">Cargando tickets...</div>
+
+    <ul *ngIf="!loading && tickets.length > 0">
+      <li *ngFor="let ticket of tickets">
+        <strong>{{ ticket.title }}</strong> - {{ ticket.status }}<br />
+        <small>{{ ticket.description }}</small><br />
+        <small class="text-muted">{{ ticket.comments }}</small><br />
+
+        <div class="tickets-actions">
+          <button class="btn btn-warning" (click)="updateTicketStatus(ticket, 'IN_PROGRESS')">En Progreso</button>
+          <button class="btn btn-success" (click)="updateTicketStatus(ticket, 'DONE')">Finalizar</button>
+          <button class="btn btn-danger" (click)="deleteTicket(ticket)">Eliminar</button>
+        </div>
+      </li>
+    </ul>
+
+    <p *ngIf="!loading && tickets.length === 0" class="message">
+      No hay tickets registrados para esta historia.
+    </p>
+  </div>
+</div>

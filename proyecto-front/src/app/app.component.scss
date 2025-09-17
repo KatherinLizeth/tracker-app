@@ -1,0 +1,52 @@
+/* Contenedor principal del navbar */
+.navbar {
+  background-color: #007bff; /* consistente con el login */
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Links de la izquierda */
+.nav-left a {
+  text-decoration: none;
+  color: white;
+  margin-right: 20px;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.nav-left a:hover {
+  color: #ffdd57; /*al pasar el mouse */
+}
+
+.active {
+  font-weight: bold;
+  border-bottom: 2px solid white;
+}
+
+/* Botón de logout */
+.logout-btn {
+  background-color: #ff4757; /*  para cerrar sesión */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background-color: #e84118; /*  oscuro al pasar mouse */
+}
+
+/* Contenedor principal para que las pantallas tengan espacio */
+.main-container {
+  padding: 20px;
+  background-color: #f7f9fc;
+  min-height: calc(100vh - 60px); /* Altura completa menos el navbar */
+}
