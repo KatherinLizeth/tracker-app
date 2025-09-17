@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { environment } from '../../../enviroments/enviroment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api/token/';
+  private apiUrl = `${environment.apiUrl}/token/`;
   private tokenKey = 'access_token';
-  private registerUrl = 'http://localhost:8000/api/register/';
+  private registerUrl = `${environment.apiUrl}/register/`;
 
   // Manejo reactivo del estado de sesión
   private loggedInSubject = new BehaviorSubject<boolean>(this.hasToken());

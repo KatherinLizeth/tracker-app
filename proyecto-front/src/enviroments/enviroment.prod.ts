@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://tu-backend.railway.app/api'
+  apiUrl: 'https://tracker-app-d1w5.onrender.com'
 };

@@ -157,9 +157,19 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 CORS_ALLOWED_ORIGINS = [
+    "https://proyecto-front.onrender.com",
+    "https://tracker-app-1-vqbj.onrender.com",
     "http://localhost:4200",
 ]
+
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
