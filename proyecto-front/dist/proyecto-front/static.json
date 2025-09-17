@@ -1,6 +1,0 @@
-{
-    "root": "dist/proyecto-front/",
-    "routes": {
-        "/**": "index.html"
-    }
-}
